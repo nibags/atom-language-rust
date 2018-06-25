@@ -327,9 +327,11 @@ describe 'Rust grammar', ->
     expect(tokens[2]).toEqual value: ' text', scopes: ['source.rust']
 
   it 'tokenizes sigils', ->
-    {tokens} = grammar.tokenizeLine('*var &var')
+    {tokens} = grammar.tokenizeLine('*var &var ~var @var')
     expect(tokens[0]).toEqual value: '*', scopes: ['source.rust', 'keyword.operator.sigil.rust']
     expect(tokens[2]).toEqual value: '&', scopes: ['source.rust', 'keyword.operator.sigil.rust']
+    expect(tokens[3]).toEqual value: '~', scopes: ['source.rust', 'keyword.operator.sigil.rust']
+    expect(tokens[4]).toEqual value: '@', scopes: ['source.rust', 'keyword.operator.sigil.rust']
 
   #
   # Core
