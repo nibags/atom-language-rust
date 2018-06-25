@@ -103,11 +103,11 @@ describe 'Rust grammar', ->
     {tokens} = grammar.tokenizeLine('text "string\\nwith\\x20escaped\\"characters" text')
     expect(tokens[0]).toEqual value: 'text ', scopes: ['source.rust']
     expect(tokens[2]).toEqual value: 'string', scopes: ['source.rust', 'string.quoted.double.rust']
-    expect(tokens[3]).toEqual value: '\\n', scopes: ['source.rust', 'string.quoted.double.rust', 'constant.character.escape.rust', 'constant.character.escape.unicode.rust']
+    expect(tokens[3]).toEqual value: '\\n', scopes: ['source.rust', 'string.quoted.double.rust', 'constant.character.escape.rust']
     expect(tokens[4]).toEqual value: 'with', scopes: ['source.rust', 'string.quoted.double.rust']
-    expect(tokens[5]).toEqual value: '\\x20', scopes: ['source.rust', 'string.quoted.double.rust', 'constant.character.escape.rust', 'constant.character.escape.unicode.rust']
+    expect(tokens[5]).toEqual value: '\\x20', scopes: ['source.rust', 'string.quoted.double.rust', 'constant.character.escape.rust']
     expect(tokens[6]).toEqual value: 'escaped', scopes: ['source.rust', 'string.quoted.double.rust']
-    expect(tokens[7]).toEqual value: '\\"', scopes: ['source.rust', 'string.quoted.double.rust', 'constant.character.escape.rust', 'constant.character.escape.unicode.rust']
+    expect(tokens[7]).toEqual value: '\\"', scopes: ['source.rust', 'string.quoted.double.rust', 'constant.character.escape.rust']
     expect(tokens[8]).toEqual value: 'characters', scopes: ['source.rust', 'string.quoted.double.rust']
     expect(tokens[10]).toEqual value: ' text', scopes: ['source.rust']
 
@@ -330,8 +330,8 @@ describe 'Rust grammar', ->
     {tokens} = grammar.tokenizeLine('*var &var ~var @var')
     expect(tokens[0]).toEqual value: '*', scopes: ['source.rust', 'keyword.operator.sigil.rust']
     expect(tokens[2]).toEqual value: '&', scopes: ['source.rust', 'keyword.operator.sigil.rust']
-    expect(tokens[3]).toEqual value: '~', scopes: ['source.rust', 'keyword.operator.sigil.rust']
-    expect(tokens[4]).toEqual value: '@', scopes: ['source.rust', 'keyword.operator.sigil.rust']
+    expect(tokens[4]).toEqual value: '~', scopes: ['source.rust', 'keyword.operator.sigil.rust']
+    expect(tokens[6]).toEqual value: '@', scopes: ['source.rust', 'keyword.operator.sigil.rust']
 
   #
   # Core
