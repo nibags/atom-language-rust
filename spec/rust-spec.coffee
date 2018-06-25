@@ -103,11 +103,11 @@ describe 'Rust grammar', ->
     {tokens} = grammar.tokenizeLine('text "string\\nwith\\x20escaped\\"characters" text')
     expect(tokens[0]).toEqual value: 'text ', scopes: ['source.rust']
     expect(tokens[2]).toEqual value: 'string', scopes: ['source.rust', 'string.quoted.double.rust']
-    expect(tokens[3]).toEqual value: '\\n', scopes: ['source.rust', 'string.quoted.double.rust', 'constant.character.escape.rust']
+    expect(tokens[3]).toEqual value: '\\n', scopes: ['source.rust', 'string.quoted.double.rust', 'constant.character.escape.rust', 'constant.character.escape.unicode.rust']
     expect(tokens[4]).toEqual value: 'with', scopes: ['source.rust', 'string.quoted.double.rust']
-    expect(tokens[5]).toEqual value: '\\x20', scopes: ['source.rust', 'string.quoted.double.rust', 'constant.character.escape.rust']
+    expect(tokens[5]).toEqual value: '\\x20', scopes: ['source.rust', 'string.quoted.double.rust', 'constant.character.escape.rust', 'constant.character.escape.unicode.rust']
     expect(tokens[6]).toEqual value: 'escaped', scopes: ['source.rust', 'string.quoted.double.rust']
-    expect(tokens[7]).toEqual value: '\\"', scopes: ['source.rust', 'string.quoted.double.rust', 'constant.character.escape.rust']
+    expect(tokens[7]).toEqual value: '\\"', scopes: ['source.rust', 'string.quoted.double.rust', 'constant.character.escape.rust', 'constant.character.escape.unicode.rust']
     expect(tokens[8]).toEqual value: 'characters', scopes: ['source.rust', 'string.quoted.double.rust']
     expect(tokens[10]).toEqual value: ' text', scopes: ['source.rust']
 
@@ -139,7 +139,7 @@ describe 'Rust grammar', ->
   it 'tokenizes byte strings', ->
     {tokens} = grammar.tokenizeLine('text b"This is a bytestring" text')
     expect(tokens[0]).toEqual value: 'text ', scopes: ['source.rust']
-    expect(tokens[2]).toEqual value: 'This is a bytestring', scopes: ['source.rust', 'string.quoted.double.rust']
+    expect(tokens[2]).toEqual value: 'This is a bytestring', scopes: ['source.rust', 'string.byte.quoted.double.rust']
     expect(tokens[4]).toEqual value: ' text', scopes: ['source.rust']
 
   it 'tokenizes raw byte strings', ->
@@ -170,13 +170,13 @@ describe 'Rust grammar', ->
   it 'tokenizes bytes character', ->
     {tokens} = grammar.tokenizeLine('text b\'b\' text')
     expect(tokens[0]).toEqual value: 'text ', scopes: ['source.rust']
-    expect(tokens[1]).toEqual value: 'b\'b\'', scopes: ['source.rust', 'string.quoted.single.rust']
+    expect(tokens[1]).toEqual value: 'b\'b\'', scopes: ['source.rust', 'string.byte.quoted.single.rust']
     expect(tokens[2]).toEqual value: ' text', scopes: ['source.rust']
 
   it 'tokenizes escaped bytes characters', ->
     {tokens} = grammar.tokenizeLine('text b\'\\x20\' text')
     expect(tokens[0]).toEqual value: 'text ', scopes: ['source.rust']
-    expect(tokens[1]).toEqual value: 'b\'\\x20\'', scopes: ['source.rust', 'string.quoted.single.rust']
+    expect(tokens[1]).toEqual value: 'b\'\\x20\'', scopes: ['source.rust', 'string.byte.quoted.single.rust']
     expect(tokens[2]).toEqual value: ' text', scopes: ['source.rust']
 
   #

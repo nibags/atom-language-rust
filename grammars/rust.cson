@@ -39,12 +39,26 @@
   }
   'escaped_character': {
     'name': 'constant.character.escape.rust'
-    'match': '\\\\(x[0-9A-Fa-f]{2}|[0-2][0-7]{0,2}|3[0-6][0-7]?|37[0-7]?|[4-7][0-7]?|.)'
+    'match': '\\\\([trn0\'\"\\\\]|x[0-9A-Fa-f]{2}|$)'
+  }
+  'unicode_escaped_character': {
+    'name': 'constant.character.escape.unicode.rust'
+    'match': '\\\\u\\{([0-9A-Fa-f]_*){1,6}\\}'
   }
   'string_literal': {
     'comment': 'Double-quote string literal'
     'name': 'string.quoted.double.rust'
-    'begin': 'b?"'
+    'begin': '"'
+    'end': '"'
+    'patterns': [
+      { 'include': '#escaped_character' }
+      { 'include': '#unicode_escaped_character' }
+    ]
+  }
+  'byte_string_literal': {
+    'comment': 'Double-quote byte string literal'
+    'name': 'string.byte.quoted.double.rust'
+    'begin': 'b"'
     'end': '"'
     'patterns': [
       { 'include': '#escaped_character' }
@@ -59,7 +73,7 @@
   'sigils': {
     'comment': 'Sigil'
     'name': 'keyword.operator.sigil.rust'
-    'match': '[&*](?=[a-zA-Z0-9_\\(\\[\\|\\"]+)'
+    'match': '[&*](?=[a-zA-Z0-9_\\(\\[\\|\\"\\x80-\\xFF]+)'
   }
   'self': {
     'comment': 'Self variable'
@@ -99,14 +113,14 @@
   'lifetime': {
     'comment': 'Named lifetime'
     'name': 'storage.modifier.lifetime.rust'
-    'match': '\'([a-zA-Z_][a-zA-Z0-9_]*)\\b'
+    'match': '\'([a-zA-Z_\\x80-\\xFF][a-zA-Z0-9_\\x80-\\xFF]*)\\b'
     'captures': {
       '1': { 'name': 'entity.name.lifetime.rust' }
     }
   }
   'ref_lifetime': {
     'comment': 'Reference with named lifetime'
-    'match': '&(\'([a-zA-Z_][a-zA-Z0-9_]*))\\b'
+    'match': '&(\'([a-zA-Z_\\x80-\\xFF][a-zA-Z0-9_\\x80-\\xFF]*))\\b'
     'captures': {
       '1': { 'name': 'storage.modifier.lifetime.rust' }
       '2': { 'name': 'entity.name.lifetime.rust' }
@@ -145,7 +159,7 @@
   'type': {
     'comment': 'A type'
     'name': 'entity.name.type.rust'
-    'match': '\\b([A-Za-z][_A-Za-z0-9]*|_[_A-Za-z0-9]+)\\b'
+    'match': '\\b([A-Za-z\\x80-\\xFF][_A-Za-z0-9\\x80-\\xFF]*|_[_A-Za-z0-9\\x80-\\xFF]+)\\b'
   }
   'type_params': {
     'comment': 'Type parameters'
@@ -211,6 +225,7 @@
     'end': '\\]'
     'patterns': [
       { 'include': '#string_literal' }
+      { 'include': '#byte_string_literal' }
       { 'include': '#block_doc_comment' }
       { 'include': '#block_comment' }
       { 'include': '#line_doc_comment' }
@@ -221,9 +236,15 @@
   {
     'comment': 'Single-quote string literal (character)'
     'name': 'string.quoted.single.rust'
-    'match': 'b?\'([^\'\\\\]|\\\\(x[0-9A-Fa-f]{2}|[0-2][0-7]{0,2}|3[0-6][0-7]?|37[0-7]?|[4-7][0-7]?|.))\''
+    'match': '\'([^\'\\\\]|\\\\([trn0\'\"\\\\]|x[0-9A-Fa-f]{2}|u\\{([0-9A-Fa-f]_*){1,6}\\}))\''
+  }
+  {
+    'comment': 'Single-quote byte string literal (character)'
+    'name': 'string.byte.quoted.single.rust'
+    'match': 'b\'([^\'\\\\]|\\\\([trn0\'\"\\\\]|x[0-9A-Fa-f]{2}))\''
   }
   { 'include': '#string_literal' }
+  { 'include': '#byte_string_literal' }
   { 'include': '#raw_string_literal' }
   # Numbers
   {
@@ -244,22 +265,22 @@
   {
     'comment': 'Integer literal (decimal)'
     'name': 'constant.numeric.integer.decimal.rust'
-    'match': '\\b[0-9][0-9_]*([ui](8|16|32|64|128|s|size))?\\b'
+    'match': '\\b[0-9][0-9_]*([ui](8|16|32|64|128|size))?\\b'
   }
   {
     'comment': 'Integer literal (hexadecimal)'
     'name': 'constant.numeric.integer.hexadecimal.rust'
-    'match': '\\b0x[a-fA-F0-9_]+([ui](8|16|32|64|128|s|size))?\\b'
+    'match': '\\b0x[a-fA-F0-9_]+([ui](8|16|32|64|128|size))?\\b'
   }
   {
     'comment': 'Integer literal (octal)'
     'name': 'constant.numeric.integer.octal.rust'
-    'match': '\\b0o[0-7_]+([ui](8|16|32|64|128|s|size))?\\b'
+    'match': '\\b0o[0-7_]+([ui](8|16|32|64|128|size))?\\b'
   }
   {
     'comment': 'Integer literal (binary)'
     'name': 'constant.numeric.integer.binary.rust'
-    'match': '\\b0b[01_]+([ui](8|16|32|64|128|s|size))?\\b'
+    'match': '\\b0b[01_]+([ui](8|16|32|64|128|size))?\\b'
   }
   # Language
   {
@@ -354,21 +375,21 @@
   # Function and macro calls
   {
     'comment': 'Invokation of a macro'
-    'match': '\\b([a-zA-Z_][a-zA-Z0-9_]*\\!)\\s*[({\\[]'
+    'match': '\\b([a-zA-Z_\\x80-\\xFF][a-zA-Z0-9_\\x80-\\xFF]*\\!)\\s*[({\\[]'
     'captures': {
       '1': { 'name': 'entity.name.function.macro.rust' }
     }
   }
   {
     'comment': 'Function call'
-    'match': '\\b([A-Za-z][A-Za-z0-9_]*|_[A-Za-z0-9_]+)\\s*\\('
+    'match': '\\b([A-Za-z\\x80-\\xFF][A-Za-z0-9_\\x80-\\xFF]*|_[A-Za-z0-9_\\x80-\\xFF]+)\\s*\\('
     'captures': {
       '1': { 'name': 'entity.name.function.rust' }
     }
   }
   {
     'comment': 'Function call with type parameters'
-    'begin': '\\b([A-Za-z][A-Za-z0-9_]*|_[A-Za-z0-9_]+)\\s*(::)(?=\\s*<.*>\\s*\\()'
+    'begin': '\\b([A-Za-z\\x80-\\xFF][A-Za-z0-9_\\x80-\\xFF]*|_[A-Za-z0-9_\\x80-\\xFF]+)\\s*(::)(?=\\s*<.*>\\s*\\()'
     'end': '\\('
     'captures': {
       '1': { 'name': 'entity.name.function.rust' }
@@ -381,7 +402,7 @@
   # Function definition
   {
     'comment': 'Function definition'
-    'begin': '\\b(fn)\\s+([A-Za-z][A-Za-z0-9_]*|_[A-Za-z0-9_]+)'
+    'begin': '\\b(fn)\\s+([A-Za-z\\x80-\\xFF][A-Za-z0-9_\\x80-\\xFF]*|_[A-Za-z0-9_\\x80-\\xFF]+)'
     'end': '[\\{;]'
     'beginCaptures': {
       '1': { 'name': 'keyword.other.fn.rust' }
@@ -413,7 +434,7 @@
   # Type declaration
   {
     'comment': 'Type declaration'
-    'begin': '\\b(enum|struct|trait|union)\\s+([a-zA-Z_][a-zA-Z0-9_]*)'
+    'begin': '\\b(enum|struct|trait|union)\\s+([a-zA-Z_\\x80-\\xFF][a-zA-Z0-9_\\x80-\\xFF]*)'
     'end': '[\\{\\(;]'
     'beginCaptures': {
       '1': { 'name': 'storage.type.rust' }
@@ -433,7 +454,7 @@
   # Type alias
   {
     'comment': 'Type alias'
-    'begin': '\\b(type)\\s+([a-zA-Z_][a-zA-Z0-9_]*)'
+    'begin': '\\b(type)\\s+([a-zA-Z_\\x80-\\xFF][a-zA-Z0-9_\\x80-\\xFF]*)'
     'end': ';'
     'beginCaptures': {
       '1': { 'name': 'storage.type.rust' }
