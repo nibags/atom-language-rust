@@ -764,14 +764,18 @@ describe 'Rust grammar', ->
     expect(tokens[0][13]).toEqual value: "'", scopes: ['source.rust', 'meta.type_params.rust', 'storage.modifier.lifetime.rust']
     expect(tokens[0][14]).toEqual value: 'a', scopes: ['source.rust', 'meta.type_params.rust', 'storage.modifier.lifetime.rust', 'entity.name.lifetime.rust']
 
+  #
+  # non-ASCII identifiers
+  #
+
   it 'tokenizes non-ASCII identifiers', ->
-    {tokens} = grammar.tokenizeLine("*Ωµó\n'hellóñαωΑΩµo\nhellóñαωΑΩµo!();\nhellóñαωΑΩµo();\nhellóñαωΑΩµo::Hello();\ntype hellóñαωΑΩµo;")
+    tokens = grammar.tokenizeLine('''*Ωµó\n'hellóñαωΑΩµo\nhellóñαωΑΩµo!();\nhellóñαωΑΩµo();\nhellóñαωΑΩµo::Hello();\ntype hellóñαωΑΩµo;''')
     expect(tokens[0][0]).toEqual value: '*', scopes: ['source.rust', 'keyword.operator.sigil.rust']
     expect(tokens[1][1]).toEqual value: 'hellóñαωΑΩµo', scopes: ['source.rust', 'entity.name.lifetime.rust']
     expect(tokens[2][0]).toEqual value: 'hellóñαωΑΩµo!', scopes: ['source.rust', 'entity.name.function.macro.rust']
     expect(tokens[3][0]).toEqual value: 'hellóñαωΑΩµo', scopes: ['source.rust', 'entity.name.function.rust']
     expect(tokens[4][0]).toEqual value: 'hellóñαωΑΩµo', scopes: ['source.rust', 'entity.name.function.rust']
-    expect(tokens[4][2]).toEqual value: 'hellóñαωΑΩµo', scopes: ['source.rust', 'entity.name.type.rust']
+    expect(tokens[5][1]).toEqual value: 'hellóñαωΑΩµo', scopes: ['source.rust', 'entity.name.type.rust']
 
   #
   # impl type modifier
