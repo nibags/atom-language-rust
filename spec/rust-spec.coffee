@@ -769,7 +769,7 @@ describe 'Rust grammar', ->
   #
 
   it 'tokenizes non-ASCII identifiers', ->
-    tokens = grammar.tokenizeLine("*Ωµó\n'hellóñαωΑΩµo\nhellóñαωΑΩµo!();\nhellóñαωΑΩµo();\nhellóñαωΑΩµo::Hello();\ntype hellóñαωΑΩµo;")
+    tokens = grammar.tokenizeLines("*Ωµó\n'hellóñαωΑΩµo\nhellóñαωΑΩµo!();\nhellóñαωΑΩµo();\nhellóñαωΑΩµo::Hello();\ntype hellóñαωΑΩµo;")
     expect(tokens[0][0]).toEqual value: '*', scopes: ['source.rust', 'keyword.operator.sigil.rust']
     expect(tokens[1][1]).toEqual value: 'hellóñαωΑΩµo', scopes: ['source.rust', 'entity.name.lifetime.rust']
     expect(tokens[2][0]).toEqual value: 'hellóñαωΑΩµo!', scopes: ['source.rust', 'entity.name.function.macro.rust']
