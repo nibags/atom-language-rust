@@ -327,11 +327,9 @@ describe 'Rust grammar', ->
     expect(tokens[2]).toEqual value: ' text', scopes: ['source.rust']
 
   it 'tokenizes sigils', ->
-    {tokens} = grammar.tokenizeLine('*var &var ~var @var')
+    {tokens} = grammar.tokenizeLine('*var &var')
     expect(tokens[0]).toEqual value: '*', scopes: ['source.rust', 'keyword.operator.sigil.rust']
     expect(tokens[2]).toEqual value: '&', scopes: ['source.rust', 'keyword.operator.sigil.rust']
-    expect(tokens[4]).toEqual value: '~', scopes: ['source.rust', 'keyword.operator.sigil.rust']
-    expect(tokens[6]).toEqual value: '@', scopes: ['source.rust', 'keyword.operator.sigil.rust']
 
   #
   # Core
@@ -765,3 +763,12 @@ describe 'Rust grammar', ->
     expect(tokens[0][5]).toEqual value: 'a', scopes: ['source.rust', 'meta.type_params.rust', 'storage.modifier.lifetime.rust', 'entity.name.lifetime.rust']
     expect(tokens[0][13]).toEqual value: "'", scopes: ['source.rust', 'meta.type_params.rust', 'storage.modifier.lifetime.rust']
     expect(tokens[0][14]).toEqual value: 'a', scopes: ['source.rust', 'meta.type_params.rust', 'storage.modifier.lifetime.rust', 'entity.name.lifetime.rust']
+
+  it 'tokenizes non-ASCII identifiers', ->
+    {tokens} = grammar.tokenizeLine("*Ωµó\n'hellóñαωΑΩµo\nhellóñαωΑΩµo!();\nhellóñαωΑΩµo();\nhellóñαωΑΩµo::Hello();\ntype hellóñαωΑΩµo;")
+    expect(tokens[0][0]).toEqual value: '*', scopes: ['source.rust', 'keyword.operator.sigil.rust']
+    expect(tokens[1][1]).toEqual value: 'hellóñαωΑΩµo', scopes: ['source.rust', 'entity.name.lifetime.rust']
+    expect(tokens[2][0]).toEqual value: 'hellóñαωΑΩµo!', scopes: ['source.rust', 'entity.name.function.macro.rust']
+    expect(tokens[3][0]).toEqual value: 'hellóñαωΑΩµo', scopes: ['source.rust', 'entity.name.function.rust']
+    expect(tokens[4][0]).toEqual value: 'hellóñαωΑΩµo', scopes: ['source.rust', 'entity.name.function.rust']
+    expect(tokens[4][2]).toEqual value: 'hellóñαωΑΩµo', scopes: ['source.rust', 'entity.name.type.rust']
